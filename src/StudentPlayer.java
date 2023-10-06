@@ -1,3 +1,4 @@
+
 public class StudentPlayer extends Player{
     public StudentPlayer(int playerIndex, int[] boardSize, int nToConnect) {
         super(playerIndex, boardSize, nToConnect);
@@ -7,8 +8,64 @@ public class StudentPlayer extends Player{
     @Override
     public int step(Board board) {
 
-        System.out.println(evaluatePosition(board));
+        int bestEval = minimax(0,board,3,true);
+        System.out.println(minimax(0,board,3,true));
+        System.out.println(bestStep(board,bestEval));
         return 0;
+    }
+
+    private int bestStep(Board board,int bestEval){
+        int step = 0;
+        for(int i = 0;i<7;i++){
+            if(board.stepIsValid(i)){
+                Board b = new Board(board);
+                b.step(2,i);
+                if(evaluatePosition(b) == bestEval){
+                    System.out.println("asd");
+                    return i;
+                }else{
+                    System.out.println(evaluatePosition(b));
+                }
+            }
+        }
+        return step;
+    }
+
+    private int minimax(int depth,Board board,int height,boolean maximizingPlayer){
+
+        int evaluatedPosition = 0;
+        if(depth == height){
+            return evaluatePosition(board);
+        }
+        if(maximizingPlayer){
+            int maxEvaluation = -10000;
+            for(int i = 0;i<7;i++){
+                if(board.stepIsValid(i)){
+                    Board b = new Board(board);
+                    b.step(2,i);
+                    int evaluation = minimax(depth+1,b,height,false);
+                    if(evaluation > maxEvaluation){
+                        return evaluation;
+                    }
+                    return maxEvaluation;
+                }
+            }
+        }
+        else {
+            int minEvaluation = 10000;
+            for(int i = 0;i<7;i++){
+                if(board.stepIsValid(i)){
+                    Board b = new Board(board);
+                    b.step(1,i);
+                    int evaluation = minimax(depth+1,b,height,true);
+                    if(evaluation < minEvaluation){
+                        return evaluation;
+                    }
+                    return minEvaluation;
+                }
+            }
+        }
+        return evaluatedPosition;
     }
 
     /**
@@ -46,8 +103,8 @@ public class StudentPlayer extends Player{
 
         int connectedNs = 0;
 
+        //Checking from the start of the table
         for(int i = 0; i<7-N;i++){
-
             for(int j = 0;j<=6-N;j++){
                 int count = 0;
                 for(int x = 0;x< N;x++){
@@ -62,8 +119,8 @@ public class StudentPlayer extends Player{
             }
         }
 
+        //Checking from the end of the table
         for(int i = 6; i>=N-1;i--){
-
             for(int j = 0;j< 7-N;j++){
                 int count = 0;
                 for(int x = 0;x< N;x++){
@@ -147,7 +204,6 @@ public class StudentPlayer extends Player{
 
             }
         }
-
         return connectedNs;
     }
 
