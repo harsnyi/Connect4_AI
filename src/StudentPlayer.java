@@ -8,8 +8,7 @@ public class StudentPlayer extends Player{
     @Override
     public int step(Board board) {
 
-//        printOutBoard(replicatePosition());
-//        System.out.println(evaluatePosition(replicatePosition()));
+
         System.out.println(evaluatePosition(board));
         System.out.println(board.getLastPlayerIndex());
         return minimax(0,board,5,true);
@@ -199,28 +198,4 @@ public class StudentPlayer extends Player{
         }
         return connectedNs;
     }
-
-    private int[][] replicatePosition(){
-        int[][] position = new int[boardSize[0]][boardSize[1]];
-
-        position[5][0] = 1;
-        position[5][1] = 1;
-        position[5][2] = 1;
-
-        position[4][0] = 2;
-        position[3][0] = 2;
-        position[2][0] = 2;
-
-        return position;
-    }
-
-    private void printOutBoard(int [][] state){
-        for(int i = 0;i<6;i++){
-            for(int j = 0;j<7;j++){
-                System.out.print(state[i][j]+ " ");
-            }
-            System.out.println();
-        }
-    }
-
 }
