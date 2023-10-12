@@ -8,24 +8,42 @@ public class StudentPlayer extends Player{
     @Override
     public int step(Board board) {
 
-        return minimax(0,board,5,true);
+
+        System.out.println("-------------------------------------------------------");
+        final int[] boardSize = new int[] {6, 7};
+        ConsoleView c = new ConsoleView(boardSize);
+        c.drawBoard(board);
+        System.out.println("Position of the board: " + evaluatePosition(board));
+
+
+        maximums(board);
+        System.out.println("Next move of the AI: " + minimax(0,board,7,false));
+        return minimax(0,board,7,false);
     }
 
-    private int minimax(int depth,Board board,int height,boolean maximizingPlayer){
+    private void maximums(Board board){
+        for(int i = 0;i<7;i++){
+            if(board.stepIsValid(i)){
+                Board b = new Board(board);
+                b.step(2,i);
+                System.out.println("Evaluation of the " + i + ". column is "+ evaluatePosition(b));
+            }
+        }
+    }
 
-        int bestMove = -1;
+    private int minimax(int depth, Board board, int height, boolean maximizingPlayer) {
         if (depth == height) {
             return evaluatePosition(board);
         }
 
-        if(maximizingPlayer){
+        if (maximizingPlayer) {
             int maxEvaluation = -10000;
-            for(int i = 0;i<7;i++){
-                if(board.stepIsValid(i)){
+            int bestMove = -1;
+            for (int i = 0; i < 7; i++) {
+                if (board.stepIsValid(i)) {
                     Board b = new Board(board);
-                    b.step(2,i);
-                    int evaluation = minimax(depth+1,b,height,false);
-
+                    b.step(2, i);
+                    int evaluation = minimax(depth + 1, b, height, false);
                     if (evaluation > maxEvaluation) {
                         maxEvaluation = evaluation;
                         bestMove = i;
@@ -33,15 +51,15 @@ public class StudentPlayer extends Player{
                 }
             }
             return bestMove;
-        }
-        else {
+        } else {
             int minEvaluation = 10000;
-            for(int i = 0;i<7;i++){
-                if(board.stepIsValid(i)){
+            int bestMove = -1;
+            for (int i = 0; i < 7; i++) {
+                if (board.stepIsValid(i)) {
                     Board b = new Board(board);
-                    b.step(1,i);
-                    int evaluation = minimax(depth+1,b,height,true);
-                    if(evaluation < minEvaluation){
+                    b.step(1, i);
+                    int evaluation = minimax(depth + 1, b, height, true);
+                    if (evaluation < minEvaluation) {
                         minEvaluation = evaluation;
                         bestMove = i;
                     }
@@ -50,6 +68,7 @@ public class StudentPlayer extends Player{
             return bestMove;
         }
     }
+
 
     /**
      * Utility value = (foursOfTheAI * 10 + threesOfTheAI * 5 + twosOfTheAI * 2) - (opponentFours *10 + opponentThrees * 5 + opponentTwos * 2)
@@ -68,8 +87,8 @@ public class StudentPlayer extends Player{
         int twosOfOpponent = checkForN(2, board,opponentIndex);
 
 
-        return ((foursOfStudentPlayer * 60 + threesOfStudentPlayer * 30 + twosOfStudentPlayer * 2) -
-                (foursOfOpponent * 60 + threesOfOpponent * 60 + twosOfOpponent * 3));
+        return ((foursOfStudentPlayer * 150 + threesOfStudentPlayer * 30 + twosOfStudentPlayer * 3) -
+                (foursOfOpponent * 150 + threesOfOpponent * 30 + twosOfOpponent * 3));
     }
 
     private int checkForN(int N,Board board, int playerIndex){
@@ -192,4 +211,37 @@ public class StudentPlayer extends Player{
         }
         return connectedNs;
     }
+    private Board replicatePosition(){
+
+        final int[] boardSize = new int[] {6, 7};
+        final int nToConnect = 4;
+        Board b = new Board(boardSize,nToConnect);
+
+        b.step(1,1);
+        b.step(1,1);
+        b.step(1,1);
+        b.step(2,1);
+
+        b.step(2,0);
+        b.step(2,0);
+        b.step(1,0);
+        b.step(2,0);
+
+        b.step(2,2);
+        b.step(1,2);
+
+        b.step(1,4);
+
+        return b;
+    }
+
+    private void printOutBoard(int [][] state){
+        for(int i = 0;i<6;i++){
+            for(int j = 0;j<7;j++){
+                System.out.print(state[i][j]+ " ");
+            }
+            System.out.println();
+        }
+    }
+
 }
