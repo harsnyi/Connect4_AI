@@ -8,35 +8,20 @@ public class StudentPlayer extends Player{
     @Override
     public int step(Board board) {
 
-        int bestEval = minimax(0,board,3,true);
-        System.out.println(minimax(0,board,3,true));
-        System.out.println(bestStep(board,bestEval));
-        return 0;
-    }
-
-    private int bestStep(Board board,int bestEval){
-        int step = 0;
-        for(int i = 0;i<7;i++){
-            if(board.stepIsValid(i)){
-                Board b = new Board(board);
-                b.step(2,i);
-                if(evaluatePosition(b) == bestEval){
-                    System.out.println("asd");
-                    return i;
-                }else{
-                    System.out.println(evaluatePosition(b));
-                }
-            }
-        }
-        return step;
+//        printOutBoard(replicatePosition());
+//        System.out.println(evaluatePosition(replicatePosition()));
+        System.out.println(evaluatePosition(board));
+        System.out.println(board.getLastPlayerIndex());
+        return minimax(0,board,5,true);
     }
 
     private int minimax(int depth,Board board,int height,boolean maximizingPlayer){
 
-        int evaluatedPosition = 0;
-        if(depth == height){
+        int bestMove = -1;
+        if (depth == height) {
             return evaluatePosition(board);
         }
+
         if(maximizingPlayer){
             int maxEvaluation = -10000;
             for(int i = 0;i<7;i++){
@@ -44,12 +29,14 @@ public class StudentPlayer extends Player{
                     Board b = new Board(board);
                     b.step(2,i);
                     int evaluation = minimax(depth+1,b,height,false);
-                    if(evaluation > maxEvaluation){
-                        return evaluation;
+
+                    if (evaluation > maxEvaluation) {
+                        maxEvaluation = evaluation;
+                        bestMove = i;
                     }
-                    return maxEvaluation;
                 }
             }
+            return bestMove;
         }
         else {
             int minEvaluation = 10000;
@@ -59,13 +46,13 @@ public class StudentPlayer extends Player{
                     b.step(1,i);
                     int evaluation = minimax(depth+1,b,height,true);
                     if(evaluation < minEvaluation){
-                        return evaluation;
+                        minEvaluation = evaluation;
+                        bestMove = i;
                     }
-                    return minEvaluation;
                 }
             }
+            return bestMove;
         }
-        return evaluatedPosition;
     }
 
     /**
@@ -76,22 +63,26 @@ public class StudentPlayer extends Player{
     private int evaluatePosition(Board board){
 
         int opponentIndex = 1;
-
-        int foursOfStudentPlayer = checkForN(4, board.getState(),playerIndex);
-        int threesOfStudentPlayer = checkForN(3, board.getState(),playerIndex);
-        int twosOfStudentPlayer = checkForN(2, board.getState(),playerIndex);
-
-        int foursOfOpponent = checkForN(4, board.getState(),opponentIndex);
-        int threesOfOpponent = checkForN(3, board.getState(),opponentIndex);
-        int twosOfOpponent = checkForN(2, board.getState(),opponentIndex);
+        System.out.println("Last player index: " + board.getLastPlayerIndex());
 
 
-        return ((foursOfStudentPlayer * 10 + threesOfStudentPlayer * 5 + twosOfStudentPlayer * 2) -
-                (foursOfOpponent * 10 + threesOfOpponent * 5 + twosOfOpponent * 2));
+        int foursOfStudentPlayer = checkForN(4, board,playerIndex);
+        int threesOfStudentPlayer = checkForN(3, board,playerIndex);
+        int twosOfStudentPlayer = checkForN(2, board,playerIndex);
+
+        int foursOfOpponent = checkForN(4, board,opponentIndex);
+        int threesOfOpponent = checkForN(3, board,opponentIndex);
+        int twosOfOpponent = checkForN(2, board,opponentIndex);
+
+
+        return ((foursOfStudentPlayer * 60 + threesOfStudentPlayer * 30 + twosOfStudentPlayer * 2) -
+                (foursOfOpponent * 60 + threesOfOpponent * 60 + twosOfOpponent * 3));
     }
 
-    private int checkForN(int N,int[][] state, int playerIndex){
-        return (checkForNsDiagonally(N, state,playerIndex) + checkForNsInARow(N, state,playerIndex) + checkForNsInAColumn(N, state,playerIndex));
+    private int checkForN(int N,Board board, int playerIndex){
+        return (checkForNsDiagonally(N, board.getState(),board.getLastPlayerIndex(),playerIndex) +
+                checkForNsInARow(N, board.getState(),board.getLastPlayerIndex(),playerIndex) +
+                checkForNsInAColumn(N, board.getState(),board.getLastPlayerIndex(),playerIndex));
     }
 
     /**
@@ -99,7 +90,7 @@ public class StudentPlayer extends Player{
      * @param N - number of the same numbers diagonally
      * @return the number of possible Ns
      */
-    private int checkForNsDiagonally(int N, int[][] state,int playerNumber){
+    private int checkForNsDiagonally(int N, int[][] state,int lastPlayer,int playerNumber){
 
         int connectedNs = 0;
 
@@ -135,6 +126,8 @@ public class StudentPlayer extends Player{
             }
         }
 
+
+
         return connectedNs;
     }
 
@@ -143,7 +136,7 @@ public class StudentPlayer extends Player{
      * @param N - number of the same numbers in a row
      * @return the number of possible Ns
      */
-    private int checkForNsInARow(int N, int[][] state,int playerNumber){
+    private int checkForNsInARow(int N, int[][] state,int lastPlayer,int playerNumber){
 
         int connectedNs = 0;
 
@@ -156,7 +149,7 @@ public class StudentPlayer extends Player{
                     piecesUnder++;
                 }
                 else if(rememberedPiece == state[i][j] && state[i][j] == playerNumber){
-                    rememberedPiece = state[j][i];
+                    rememberedPiece = state[i][j];
                     piecesUnder++;
                     if(piecesUnder == N){
                         connectedNs++;
@@ -178,7 +171,7 @@ public class StudentPlayer extends Player{
      * @param N - number of the same numbers in a column
      * @return the number of possible Ns
      */
-    private int checkForNsInAColumn(int N, int[][] state,int playerNumber){
+    private int checkForNsInAColumn(int N, int[][] state,int lastPlayer,int playerNumber){
 
         int connectedNs = 0;
 
@@ -209,6 +202,15 @@ public class StudentPlayer extends Player{
 
     private int[][] replicatePosition(){
         int[][] position = new int[boardSize[0]][boardSize[1]];
+
+        position[5][0] = 1;
+        position[5][1] = 1;
+        position[5][2] = 1;
+
+        position[4][0] = 2;
+        position[3][0] = 2;
+        position[2][0] = 2;
+
         return position;
     }
 
