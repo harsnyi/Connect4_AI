@@ -8,9 +8,6 @@ public class StudentPlayer extends Player{
     @Override
     public int step(Board board) {
 
-
-        System.out.println(evaluatePosition(board));
-        System.out.println(board.getLastPlayerIndex());
         return minimax(0,board,5,true);
     }
 
@@ -62,9 +59,6 @@ public class StudentPlayer extends Player{
     private int evaluatePosition(Board board){
 
         int opponentIndex = 1;
-        System.out.println("Last player index: " + board.getLastPlayerIndex());
-
-
         int foursOfStudentPlayer = checkForN(4, board,playerIndex);
         int threesOfStudentPlayer = checkForN(3, board,playerIndex);
         int twosOfStudentPlayer = checkForN(2, board,playerIndex);
