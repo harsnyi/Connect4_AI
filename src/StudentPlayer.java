@@ -19,15 +19,15 @@ public class StudentPlayer extends Player{
 
 
         maximums(board);
-        System.out.println("Next move of the AI: " + minimax(8,board,false,-10000,10000));
-        return minimax(8,board,false,-10000,10000);
+        //System.out.println("Next move of the AI: " + minimax(10,board,false,-10000,10000));
+        return minimax(11,board,false,-10000,10000);
     }
 
     private void maximums(Board board){
         for(int i = 0;i<7;i++){
             if(board.stepIsValid(i)){
                 Board b = new Board(board);
-                b.step(2,i);
+                b.step(playerIndex,i);
                 System.out.println("Evaluation of the " + i + ". column is "+ evaluatePosition(b));
             }
         }
@@ -45,7 +45,7 @@ public class StudentPlayer extends Player{
             for (int i = 0; i < 7; i++) {
                 if (board.stepIsValid(i)) {
                     Board b = new Board(board);
-                    b.step(2, i);
+                    b.step(playerIndex, i);
                     int evaluation = minimax(depth - 1, b, false,alpha,beta);
                     if (evaluation > maxEvaluation) {
                         maxEvaluation = evaluation;
@@ -64,7 +64,7 @@ public class StudentPlayer extends Player{
             for (int i = 0; i < 7; i++) {
                 if (board.stepIsValid(i)) {
                     Board b = new Board(board);
-                    b.step(1, i);
+                    b.step(3-playerIndex, i);
                     int evaluation = minimax(depth - 1, b,true,alpha,beta);
                     if (evaluation < minEvaluation) {
                         minEvaluation = evaluation;
@@ -88,7 +88,7 @@ public class StudentPlayer extends Player{
      */
     private int evaluatePosition(Board board){
 
-        int opponentIndex = 1;
+        int opponentIndex = 3 - playerIndex;
         int foursOfStudentPlayer = checkForN(4, board,playerIndex);
         int threesOfStudentPlayer = checkForN(3, board,playerIndex);
         int twosOfStudentPlayer = checkForN(2, board,playerIndex);
@@ -105,8 +105,8 @@ public class StudentPlayer extends Player{
         }
 
 
-        return ((threesOfStudentPlayer * 100 + twosOfStudentPlayer * 40) -
-                (threesOfOpponent * 100 + twosOfOpponent * 40));
+        return
+                ((threesOfStudentPlayer * 150 + twosOfStudentPlayer * 60)) - ((threesOfOpponent * 150 + twosOfOpponent * 60));
     }
 
     private int checkForN(int N,Board board, int playerIndex){
