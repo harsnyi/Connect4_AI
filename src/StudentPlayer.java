@@ -7,7 +7,7 @@ public class StudentPlayer extends Player{
 
     @Override
     public int step(Board board) {
-        return minimax(5,board,false,-10000,10000);
+        return minimax(8,board,false,-10000,10000);
     }
 
 
