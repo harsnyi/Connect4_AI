@@ -7,7 +7,7 @@ public class StudentPlayer extends Player{
 
     @Override
     public int step(Board board) {
-        return minimax(3,board,false,-10000,10000);
+        return minimax(5,board,false,-10000,10000);
     }
 
 
@@ -75,15 +75,15 @@ public class StudentPlayer extends Player{
         int twosOfOpponent = checkForN(2, board,opponentIndex);
 
         if(foursOfStudentPlayer > 0){
-            return 900;
+            return 1500;
         }
         else if (foursOfOpponent > 0){
-            return -900;
+            return -1500;
         }
 
 
         return
-                ((threesOfStudentPlayer * 200 + twosOfStudentPlayer * 80)) - ((threesOfOpponent * 200 + twosOfOpponent * 80));
+                ((threesOfStudentPlayer * 250 + twosOfStudentPlayer * 80)) - ((threesOfOpponent * 250 + twosOfOpponent * 80));
     }
 
     private int checkForN(int N,Board board, int playerIndex){
