@@ -7,9 +7,8 @@ public class StudentPlayer extends Player{
 
     @Override
     public int step(Board board) {
-        return minimax(5,board,false,-10000,10000);
+        return minimax(7,board,false,-10000,10000);
     }
-
 
 
     private int minimax(int depth, Board board, boolean maximizingPlayer,int alpha, int beta) {
@@ -84,7 +83,7 @@ public class StudentPlayer extends Player{
 
 
         return
-                ((threesOfStudentPlayer * 150 + twosOfStudentPlayer * 60)) - ((threesOfOpponent * 150 + twosOfOpponent * 60));
+                ((threesOfStudentPlayer * 200 + twosOfStudentPlayer * 80)) - ((threesOfOpponent * 200 + twosOfOpponent * 80));
     }
 
     private int checkForN(int N,Board board, int playerIndex){
