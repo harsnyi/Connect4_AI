@@ -10,6 +10,8 @@ public class StudentPlayer extends Player{
 
 
         System.out.println("-------------------------------------------------------");
+        printOutBoard(replicatePosition().getState());
+        System.out.println(evaluatePosition(replicatePosition()));
         final int[] boardSize = new int[] {6, 7};
         ConsoleView c = new ConsoleView(boardSize);
         c.drawBoard(board);
@@ -17,8 +19,8 @@ public class StudentPlayer extends Player{
 
 
         maximums(board);
-        System.out.println("Next move of the AI: " + minimax(0,board,7,false));
-        return minimax(0,board,7,false);
+        System.out.println("Next move of the AI: " + minimax(8,board,false,-10000,10000));
+        return minimax(8,board,false,-10000,10000);
     }
 
     private void maximums(Board board){
@@ -31,8 +33,9 @@ public class StudentPlayer extends Player{
         }
     }
 
-    private int minimax(int depth, Board board, int height, boolean maximizingPlayer) {
-        if (depth == height) {
+    private int minimax(int depth, Board board, boolean maximizingPlayer,int alpha, int beta) {
+        if (depth == 0 || board.gameEnded()) {
+            System.out.println(board.gameEnded());
             return evaluatePosition(board);
         }
 
@@ -43,10 +46,14 @@ public class StudentPlayer extends Player{
                 if (board.stepIsValid(i)) {
                     Board b = new Board(board);
                     b.step(2, i);
-                    int evaluation = minimax(depth + 1, b, height, false);
+                    int evaluation = minimax(depth - 1, b, false,alpha,beta);
                     if (evaluation > maxEvaluation) {
                         maxEvaluation = evaluation;
                         bestMove = i;
+                    }
+                    alpha = Math.max(alpha,maxEvaluation);
+                    if (alpha >= beta){
+                        break;
                     }
                 }
             }
@@ -58,10 +65,14 @@ public class StudentPlayer extends Player{
                 if (board.stepIsValid(i)) {
                     Board b = new Board(board);
                     b.step(1, i);
-                    int evaluation = minimax(depth + 1, b, height, true);
+                    int evaluation = minimax(depth - 1, b,true,alpha,beta);
                     if (evaluation < minEvaluation) {
                         minEvaluation = evaluation;
                         bestMove = i;
+                    }
+                    beta = Math.min(beta,minEvaluation);
+                    if (alpha >= beta){
+                        break;
                     }
                 }
             }
@@ -86,9 +97,16 @@ public class StudentPlayer extends Player{
         int threesOfOpponent = checkForN(3, board,opponentIndex);
         int twosOfOpponent = checkForN(2, board,opponentIndex);
 
+        if(foursOfStudentPlayer > 0){
+            return 500;
+        }
+        else if (foursOfOpponent > 0){
+            return -500;
+        }
 
-        return ((foursOfStudentPlayer * 150 + threesOfStudentPlayer * 30 + twosOfStudentPlayer * 3) -
-                (foursOfOpponent * 150 + threesOfOpponent * 30 + twosOfOpponent * 3));
+
+        return ((threesOfStudentPlayer * 100 + twosOfStudentPlayer * 40) -
+                (threesOfOpponent * 100 + twosOfOpponent * 40));
     }
 
     private int checkForN(int N,Board board, int playerIndex){
@@ -137,8 +155,6 @@ public class StudentPlayer extends Player{
 
             }
         }
-
-
 
         return connectedNs;
     }
@@ -217,20 +233,13 @@ public class StudentPlayer extends Player{
         final int nToConnect = 4;
         Board b = new Board(boardSize,nToConnect);
 
-        b.step(1,1);
-        b.step(1,1);
-        b.step(1,1);
-        b.step(2,1);
+       b.step(1,1);
+       b.step(1,1);
+       b.step(1,1);
 
-        b.step(2,0);
-        b.step(2,0);
-        b.step(1,0);
-        b.step(2,0);
-
-        b.step(2,2);
-        b.step(1,2);
-
-        b.step(1,4);
+       b.step(2,3);
+       b.step(2,4);
+       b.step(2,5);
 
         return b;
     }
