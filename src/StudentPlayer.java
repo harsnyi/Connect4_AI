@@ -7,35 +7,13 @@ public class StudentPlayer extends Player{
 
     @Override
     public int step(Board board) {
-
-
-        System.out.println("-------------------------------------------------------");
-        printOutBoard(replicatePosition().getState());
-        System.out.println(evaluatePosition(replicatePosition()));
-        final int[] boardSize = new int[] {6, 7};
-        ConsoleView c = new ConsoleView(boardSize);
-        c.drawBoard(board);
-        System.out.println("Position of the board: " + evaluatePosition(board));
-
-
-        maximums(board);
-        //System.out.println("Next move of the AI: " + minimax(10,board,false,-10000,10000));
         return minimax(11,board,false,-10000,10000);
     }
 
-    private void maximums(Board board){
-        for(int i = 0;i<7;i++){
-            if(board.stepIsValid(i)){
-                Board b = new Board(board);
-                b.step(playerIndex,i);
-                System.out.println("Evaluation of the " + i + ". column is "+ evaluatePosition(b));
-            }
-        }
-    }
+
 
     private int minimax(int depth, Board board, boolean maximizingPlayer,int alpha, int beta) {
         if (depth == 0 || board.gameEnded()) {
-            System.out.println(board.gameEnded());
             return evaluatePosition(board);
         }
 
@@ -227,30 +205,7 @@ public class StudentPlayer extends Player{
         }
         return connectedNs;
     }
-    private Board replicatePosition(){
 
-        final int[] boardSize = new int[] {6, 7};
-        final int nToConnect = 4;
-        Board b = new Board(boardSize,nToConnect);
 
-       b.step(1,1);
-       b.step(1,1);
-       b.step(1,1);
-
-       b.step(2,3);
-       b.step(2,4);
-       b.step(2,5);
-
-        return b;
-    }
-
-    private void printOutBoard(int [][] state){
-        for(int i = 0;i<6;i++){
-            for(int j = 0;j<7;j++){
-                System.out.print(state[i][j]+ " ");
-            }
-            System.out.println();
-        }
-    }
 
 }
