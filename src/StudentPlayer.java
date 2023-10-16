@@ -7,8 +7,34 @@ public class StudentPlayer extends Player{
 
     @Override
     public int step(Board board) {
-        return minimax(6,board,false,-10000,10000);
+
+        if(checkForN(3,board,playerIndex) > 0){
+            for(int i = 0;i<7;i++){
+                if(board.stepIsValid(i)){
+                    Board b = new Board(board);
+                    b.step(playerIndex, i);
+                    if(checkForN(4,b,playerIndex) > 0){
+                        return i;
+                    }
+                }
+            }
+        }
+
+        if(checkForN(3,board,3-playerIndex) > 0){
+            for(int i = 0;i<7;i++){
+                if(board.stepIsValid(i)){
+                    Board b = new Board(board);
+                    b.step(3-playerIndex, i);
+                    if(checkForN(4,b,3-playerIndex) > 0){
+                        return i;
+                    }
+                }
+            }
+        }
+
+        return minimax(7,board,true,-100000,100000);
     }
+
 
 
     private int minimax(int depth, Board board, boolean maximizingPlayer,int alpha, int beta) {
@@ -17,12 +43,12 @@ public class StudentPlayer extends Player{
         }
 
         if (maximizingPlayer) {
-            int maxEvaluation = -10000;
+            int maxEvaluation = -100000;
             int bestMove = -1;
             for (int i = 0; i < 7; i++) {
                 if (board.stepIsValid(i)) {
                     Board b = new Board(board);
-                    b.step(playerIndex, i);
+                    b.step(3-playerIndex, i);
                     int evaluation = minimax(depth - 1, b, false,alpha,beta);
                     if (evaluation > maxEvaluation) {
                         maxEvaluation = evaluation;
@@ -36,12 +62,12 @@ public class StudentPlayer extends Player{
             }
             return bestMove;
         } else {
-            int minEvaluation = 10000;
+            int minEvaluation = 100000;
             int bestMove = -1;
             for (int i = 0; i < 7; i++) {
                 if (board.stepIsValid(i)) {
                     Board b = new Board(board);
-                    b.step(3-playerIndex, i);
+                    b.step(playerIndex, i);
                     int evaluation = minimax(depth - 1, b,true,alpha,beta);
                     if (evaluation < minEvaluation) {
                         minEvaluation = evaluation;
@@ -69,21 +95,16 @@ public class StudentPlayer extends Player{
         int foursOfStudentPlayer = checkForN(4, board,playerIndex);
         int threesOfStudentPlayer = checkForN(3, board,playerIndex);
         int twosOfStudentPlayer = checkForN(2, board,playerIndex);
+        int centerPiecesOfStudentPlayer = checkForImportantPieces(board.getState(),playerIndex);
 
         int foursOfOpponent = checkForN(4, board,opponentIndex);
         int threesOfOpponent = checkForN(3, board,opponentIndex);
         int twosOfOpponent = checkForN(2, board,opponentIndex);
-
-        if(foursOfStudentPlayer > 0){
-            return 1900;
-        }
-        else if (foursOfOpponent > 0){
-            return -1900;
-        }
-
+        int centerPiecesOfOpponent = checkForImportantPieces(board.getState(),opponentIndex);
 
         return
-                ((threesOfStudentPlayer * 250 + twosOfStudentPlayer * 60)) - ((threesOfOpponent * 250 + twosOfOpponent * 60));
+                ((foursOfStudentPlayer * 1800 + threesOfStudentPlayer * 300 + twosOfStudentPlayer * 150 + centerPiecesOfStudentPlayer * 80)) -
+                        ((foursOfOpponent * 2600 + threesOfOpponent * 300 + twosOfOpponent * 150 + centerPiecesOfOpponent * 80));
     }
 
     private int checkForN(int N,Board board, int playerIndex){
@@ -203,6 +224,23 @@ public class StudentPlayer extends Player{
             }
         }
         return connectedNs;
+    }
+
+    private int checkForImportantPieces(int[][] state,int playerNumber){
+
+        int foundPieces = 0;
+
+        for(int i = 0; i<7;i++){
+            for(int j = 0; j<6;j++){
+
+                if(state[j][3] == playerNumber
+                        || state[j][4] == playerNumber
+                        || state[j][2] == playerNumber){
+                    foundPieces ++;
+                }
+            }
+        }
+        return foundPieces;
     }
 
 
